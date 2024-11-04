@@ -12,7 +12,7 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v3
+      - uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: '8.0.x' # SDK Version to use.
           source-url: https://nuget.pkg.github.com/polimaster/index.json
@@ -25,6 +25,9 @@ jobs:
           echo "src=src/Polimaster.Device.Transport.Http/Polimaster.Device.Transport.Http" >> "$GITHUB_ENV"
       - name: Build
         run: dotnet build "$src" -c Release -p:AssemblyVersion="$tag" -p:Version="$tag"
+        env:
+          # see https://github.com/actions/setup-dotnet/issues/543
+          NuGetPackageSourceCredentials_github.polimaster: Username=${{ github.actor }};Password=${{ secrets.GITHUB_TOKEN }}
 #      - name: Run tests
 #        run: dotnet test "$src.Tests"
       - name: Create the package
